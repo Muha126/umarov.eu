@@ -1,0 +1,66 @@
+.terminal {
+  min-height: 100svh;
+  padding: clamp(48px, 8vh, 96px) 4.2vw 0;
+  background: #000;
+}
+
+.console-name {
+  display: block;
+  width: 100%;
+  height: clamp(180px, 31vw, 470px);
+  transform: scale(0.58);
+  transform-origin: center center;
+}
+
+.experience {
+  width: 64%;
+  max-width: 760px;
+  margin: 32px auto 0;
+  padding-bottom: 48px;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.experience h2 {
+  margin: 0 0 26px;
+  color: #66ff80;
+  font-size: 22px;
+  font-weight: 400;
+}
+
+.experience-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.experience h3 {
+  margin: 0;
+  color: #c4dbca;
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.experience h3 span {
+  margin-left: 6px;
+  color: #728378;
+  font-size: 14px;
+}
+
+.experience-dates { margin: 0; color: #8b9e91; font-size: 13px; }
+.experience-role { margin: 7px 0 0; color: #a4b9aa; }
+.experience-summary { max-width: 620px; margin: 10px 0 0; color: #8b9e91; }
+.experience:last-child { padding-bottom: 100px; }
+.project + .project { margin-top: 32px; }
+.project a:hover { color: #66ff80; }
+.project h3 span { color: #66ff80; }
+.skills-list { display: flex; flex-wrap: wrap; gap: 10px 24px; margin: 0; padding: 0; list-style: none; color: #a4b9aa; }
+
+@media (max-width: 600px) {
+  .terminal { padding-inline: 6vw; }
+  .console-name { height: 180px; }
+  .experience { width: 88%; margin-top: 40px; }
+  .experience-heading { flex-wrap: wrap; gap: 2px 12px; }
+}
+
