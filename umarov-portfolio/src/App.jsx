@@ -13,29 +13,91 @@ const glyphs = {
 }
 
 const commandResponses = {
-  help: 'available: about · experience · projects · contact · clear',
+  help: 'available: about · experience · projects · contact · clear · reboot · doom · idkfa',
   about: 'M Umarov — software developer building useful systems.',
   experience: 'IBM Ireland · Software Development Intern · 2026\nUzAuto Chevrolet · Software Development Intern · 2022',
   projects: 'AI Baby · Cinema Ticketing System',
   contact: 'umarovm123@gmail.com',
+  idkfa: 'CHEAT CODE DETECTED — NICE TRY.',
+}
+
+function playTerminalTone(frequency = 420, duration = 0.035) {
+  try {
+    const AudioContext = window.AudioContext || window.webkitAudioContext
+    if (!AudioContext) return
+    const context = window.__umarovAudioContext || (window.__umarovAudioContext = new AudioContext())
+    if (context.state === 'suspended') context.resume()
+    const oscillator = context.createOscillator()
+    const gain = context.createGain()
+    oscillator.type = 'square'
+    oscillator.frequency.value = frequency
+    gain.gain.setValueAtTime(0.018, context.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + duration)
+    oscillator.connect(gain).connect(context.destination)
+    oscillator.start()
+    oscillator.stop(context.currentTime + duration)
+  } catch {
+    // Audio is a progressive enhancement and may be blocked by the browser.
+  }
+}
+
+function DoomPlayer({ onClose }) {
+  const panelRef = useRef(null)
+  const [booted, setBooted] = useState(false)
+
+  useEffect(() => {
+    panelRef.current?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+    const timer = window.setTimeout(() => setBooted(true), 1800)
+    return () => window.clearTimeout(timer)
+  }, [])
+
+  return (
+    <div className="doom-panel" ref={panelRef} aria-busy={!booted}>
+      {!booted ? <div className="doom-boot" aria-live="polite">
+        <p>C:\&gt; doom.exe -config UMAROV.CFG</p>
+        <p>Loading DOOM shareware...</p>
+        <p>IWAD found · E1M1 ready</p>
+        <p className="doom-boot-cursor">_</p>
+      </div> : <>
+        <iframe className="doom-frame" title="DOOM shareware — Knee-Deep in the Dead" src={`${import.meta.env.BASE_URL}doom/index.html`} allow="autoplay; fullscreen; gamepad" allowFullScreen />
+        <p className="doom-meta">DOOM / E1M1 · INPUT READY · MOUSE ACTIVE</p>
+        <p className="doom-controls">WASD: move · ← →: turn · Ctrl: fire · Space: open · Esc: menu <button type="button" onClick={onClose}>Exit ×</button></p>
+      </>}
+    </div>
+  )
 }
 
 function TerminalConsole() {
   const [command, setCommand] = useState('')
   const [history, setHistory] = useState([])
+  const [playingDoom, setPlayingDoom] = useState(false)
   const inputRef = useRef(null)
 
   useEffect(() => {
     inputRef.current?.focus({ preventScroll: true })
+    const unlockAudio = () => playTerminalTone(520, 0.06)
+    window.addEventListener('pointerdown', unlockAudio, { once: true })
+    return () => window.removeEventListener('pointerdown', unlockAudio)
   }, [])
 
   function runCommand(event) {
     event.preventDefault()
-    const value = command.trim().toLowerCase()
+    const value = command.trim().toLowerCase().replace(/\s+/g, ' ')
     if (!value) return
-    if (value === 'clear') {
+    if (value === 'doom' || value === 'source doom') {
+      playTerminalTone(680, 0.08)
+      setPlayingDoom(true)
+    } else if (value === 'clear') {
+      playTerminalTone(340)
       setHistory([])
+    } else if (value === 'reboot') {
+      playTerminalTone(260, 0.1)
+      setHistory(current => [...current, { command: value, response: 'System rebooting...' }])
+      setCommand('')
+      window.setTimeout(() => window.location.reload(), 700)
+      return
     } else {
+      playTerminalTone(commandResponses[value] ? 460 : 190, commandResponses[value] ? 0.03 : 0.07)
       setHistory(current => [...current, {
         command: value,
         response: commandResponses[value] || `command not found: ${value}`,
@@ -49,6 +111,7 @@ function TerminalConsole() {
       <div className="console-topline">
         <h2 id="console-title">Console</h2>
       </div>
+      {playingDoom ? <DoomPlayer onClose={() => { setPlayingDoom(false); requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true })) }} /> : <>
       <div className="console-output" aria-live="polite">
         <p><span className="console-accent">+</span> connection established</p>
         <p><span className="console-accent">+</span> type <span className="console-command">help</span> to begin</p>
@@ -67,11 +130,17 @@ function TerminalConsole() {
             ref={inputRef}
             value={command}
             onChange={event => setCommand(event.target.value)}
+            onKeyDown={event => {
+              if (event.key === 'Enter') return
+              if (event.key === 'Backspace') playTerminalTone(240, 0.025)
+              else if (event.key.length === 1) playTerminalTone(390, 0.018)
+            }}
             autoComplete="off"
             spellCheck="false"
           />
         </span>
       </form>
+      </>}
     </section>
   )
 }

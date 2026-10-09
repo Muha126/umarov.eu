@@ -1,7 +1,7 @@
 .terminal {
   position: relative;
   min-height: 100svh;
-  padding: clamp(48px, 8vh, 96px) 4.2vw 0;
+  padding: clamp(48px, 8vh, 96px) 4.2vw clamp(72px, 9vh, 112px);
   background: #000;
 }
 
@@ -73,14 +73,14 @@
 
 .social-links {
   position: absolute;
-  top: 28px;
-  left: calc(1.6vw + 64px);
+  top: 88px;
+  left: calc(1.6vw + 79px);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 7px;
   color: #8b9e91;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.2;
 }
 
@@ -250,6 +250,39 @@
   font-size: 13px;
 }
 .console-topline { display: flex; align-items: baseline; }
+.doom-panel { margin-top: 22px; background: #000; }
+.doom-boot {
+  min-height: min(540px, 55vw);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 32px;
+  box-sizing: border-box;
+  color: #7eb389;
+  background: #020503;
+  font-size: 14px;
+  line-height: 1.45;
+  text-shadow: 0 0 7px rgba(82, 211, 106, .24);
+}
+.doom-boot p { margin: 0; opacity: 0; animation: doom-boot-line 420ms steps(1) forwards; }
+.doom-boot p:nth-child(2) { animation-delay: 300ms; }
+.doom-boot p:nth-child(3) { animation-delay: 650ms; }
+.doom-boot p:nth-child(4) { animation-delay: 1000ms; }
+.doom-boot-cursor { color: #66ff80; animation: doom-boot-line 420ms steps(1) forwards, console-caret 760ms steps(1) 1.1s infinite !important; }
+@keyframes doom-boot-line { to { opacity: 1; } }
+.doom-meta { margin: 8px 0 0; color: #52d36a; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+.doom-toolbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; color: #52d36a; }
+.doom-toolbar > div { display: flex; gap: 16px; }
+.doom-toolbar button { border: 0; padding: 8px 0; background: transparent; color: #a4b9aa; cursor: pointer; }
+.doom-toolbar button:hover { color: #66ff80; }
+.doom-status, .doom-controls, .doom-credit { color: #8b9e91; line-height: 1.5; }
+.doom-credit { font-size: 11px; }
+.doom-frame { display: block; width: 100%; aspect-ratio: 4 / 3; border: 0; background: #000; }
+.doom-controls button { margin-left: 10px; border: 0; background: transparent; color: #52d36a; cursor: pointer; font: inherit; }
+.doom-controls button:hover { color: #66ff80; }
+.doom-panel:fullscreen { padding: 16px; display: flex; flex-direction: column; }
+.doom-panel:fullscreen .doom-frame { flex: 1; min-height: 0; aspect-ratio: auto; }
 .console-topline h2 { margin: 0; color: #3da653; font-size: 22px; font-weight: 400; text-shadow: 0 0 9px rgba(82, 211, 106, .28); }
 .console-topline > span { color: #506156; font-size: 11px; }
 .console-output { min-height: 74px; margin: 20px 0 14px; }
@@ -268,7 +301,7 @@
 
 @media (max-width: 600px) {
   .terminal { padding-inline: 6vw; }
-  .social-links { top: 22px; left: calc(4vw + 64px); font-size: 13px; }
+  .social-links { top: 82px; left: calc(4vw + 79px); font-size: 15px; }
   .console-name { height: 180px; }
   .experience { width: 88%; margin-top: 40px; }
   .experience-heading { flex-wrap: wrap; gap: 2px 12px; }
