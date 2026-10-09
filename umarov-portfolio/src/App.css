@@ -1,16 +1,39 @@
 .terminal {
+  position: relative;
   min-height: 100svh;
   padding: clamp(48px, 8vh, 96px) 4.2vw 0;
   background: #000;
 }
 
+.social-links {
+  position: absolute;
+  top: 28px;
+  left: 4.2vw;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+  color: #8b9e91;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.social-links a { transition: color 160ms ease; }
+.social-links a:hover { color: #66ff80; }
+.social-links a span { margin-left: 7px; color: #66ff80; }
+.gmail-row { display: flex; align-items: center; gap: 8px; }
+.copy-button { padding: 0; border: 0; background: transparent; color: #728378; cursor: pointer; font: inherit; font-size: 14px; line-height: 1; }
+.copy-button:hover { color: #66ff80; }
+.copy-note { margin-top: 3px; color: #66ff80; font-size: 10px; letter-spacing: .04em; }
+
 .console-name {
   display: block;
   width: 100%;
   height: clamp(180px, 31vw, 470px);
-  transform: scale(0.58);
+  transform: scale(0.64);
   transform-origin: center center;
 }
+
 
 .experience {
   width: 64%;
@@ -48,17 +71,106 @@
   font-size: 14px;
 }
 
+.experience h3 .ibm-mark {
+  display: inline-block;
+  margin-left: 0;
+  color: transparent;
+  font-family: Arial, sans-serif;
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  line-height: 1;
+  background: repeating-linear-gradient(to bottom, #c4dbca 0 2px, transparent 2px 4px);
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+.experience h3 .tud-mark {
+  display: inline-flex;
+  position: relative;
+  width: 32px;
+  height: 32px;
+  margin-left: 0;
+  color: #c4dbca;
+  font-family: Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  vertical-align: middle;
+}
+
+.experience h3 .tud-mark > b:first-child {
+  position: absolute;
+  top: 0;
+  left: 26px;
+  margin: 0;
+  transform: translateX(-50%);
+}
+
+.experience h3 .tud-mark b { font-weight: 900; }
+.experience h3 .tud-bottom {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  gap: 0;
+  margin: 0;
+  color: inherit;
+  font-size: inherit;
+  line-height: 1;
+}
+.experience h3 .tud-name { margin-left: 8px; }
+
 .experience-dates { margin: 0; color: #8b9e91; font-size: 13px; }
 .experience-role { margin: 7px 0 0; color: #a4b9aa; }
 .experience-summary { max-width: 620px; margin: 10px 0 0; color: #8b9e91; }
+.experience-entry { margin-top: 34px; }
 .experience:last-child { padding-bottom: 100px; }
 .project + .project { margin-top: 32px; }
 .project a:hover { color: #66ff80; }
 .project h3 span { color: #66ff80; }
+.project-mark {
+  display: inline-block;
+  width: auto;
+  height: auto;
+  margin: 0 7px 0 0 !important;
+  color: transparent !important;
+  font-family: 'Courier New', monospace;
+  font-size: 18px !important;
+  font-weight: 400;
+  line-height: 1;
+  vertical-align: -1px;
+  background: repeating-linear-gradient(to bottom, #c4dbca 0 2px, transparent 2px 4px);
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+.ai-mark {
+  color: #c4dbca !important;
+  background: none;
+  font-weight: 700;
+  letter-spacing: -1px;
+}
+.cinema-mark {
+  color: #c4dbca !important;
+  background: none;
+  font-size: 24px !important;
+  letter-spacing: 0;
+}
+.experience h3 .uzauto-mark {
+  display: inline-block;
+  margin-left: 0;
+  color: #c4dbca;
+  font-family: Arial, sans-serif;
+  font-size: 18px;
+  font-style: italic;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+}
 .skills-list { display: flex; flex-wrap: wrap; gap: 10px 24px; margin: 0; padding: 0; list-style: none; color: #a4b9aa; }
 
 @media (max-width: 600px) {
   .terminal { padding-inline: 6vw; }
+  .social-links { top: 22px; left: 6vw; font-size: 11px; }
   .console-name { height: 180px; }
   .experience { width: 88%; margin-top: 40px; }
   .experience-heading { flex-wrap: wrap; gap: 2px 12px; }

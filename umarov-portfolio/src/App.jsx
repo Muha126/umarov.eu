@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './App.css'
 
 const alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ<>/\\{}[]#%+=:;*'
@@ -34,7 +34,7 @@ function ConsoleName() {
       canvas.height = Math.round(height * dpr)
       context.setTransform(dpr, 0, 0, dpr, 0, 0)
       // Each large letter is itself built from a grid of tiny console characters.
-      const subdivisions = width < 600 ? 2 : 4
+      const subdivisions = width < 600 ? 1 : 3
       const columns = 47 * subdivisions
       const rows = 7 * subdivisions
       const stepX = width / columns
@@ -98,14 +98,31 @@ function ConsoleName() {
 }
 
 function App() {
+  const [copied, setCopied] = useState(false)
+
+  async function copyEmail() {
+    await navigator.clipboard.writeText('umarovm123@gmail.com')
+    setCopied(true)
+    window.setTimeout(() => setCopied(false), 2200)
+  }
+
   return (
     <main className="terminal" aria-labelledby="name">
+      <nav className="social-links" aria-label="Contact links">
+        <a href="https://github.com/Muha126" target="_blank" rel="noreferrer">GitHub <span>↗</span></a>
+        <a href="https://www.linkedin.com/in/mukhammadkarim-umarov-495916262/" target="_blank" rel="noreferrer">LinkedIn <span>↗</span></a>
+        <span className="gmail-row">
+          <a href="mailto:umarovm123@gmail.com">Gmail <span>↗</span></a>
+          <button type="button" className="copy-button" onClick={copyEmail} aria-label="Copy Gmail address" title="Copy email">⧉</button>
+        </span>
+        {copied && <span className="copy-note" role="status">Gmail copied</span>}
+      </nav>
       <h1 id="name" className="sr-only">M UMAROV</h1>
       <ConsoleName />
             <section className="experience" aria-labelledby="education-title">
         <h2 id="education-title">Education</h2>
         <div className="experience-heading">
-          <h3>TU Dublin</h3>
+          <h3><span className="tud-mark" aria-label="TUD"><b>T</b><span className="tud-bottom"><b>D</b><b>U</b></span></span><span className="tud-name">Technological University Dublin</span></h3>
           <p className="experience-dates">Expected Jun 2027</p>
         </div>
         <p className="experience-role">Software Development · 4th year</p>
@@ -114,7 +131,7 @@ function App() {
         <h2 id="experience-title">Experience</h2>
         <article>
           <div className="experience-heading">
-            <h3>IBM <span>Ireland</span></h3>
+            <h3><span className="ibm-mark" aria-label="IBM">IBM</span><span>Ireland</span></h3>
             <p className="experience-dates">Jan — Sep 2026</p>
           </div>
           <p className="experience-role">Software Development Intern</p>
@@ -123,16 +140,27 @@ function App() {
             and improved speech recognition models.
           </p>
         </article>
+        <article className="experience-entry">
+          <div className="experience-heading">
+            <h3><span className="uzauto-mark" aria-label="UzAuto">UzAuto</span> <span>Chevrolet</span></h3>
+            <p className="experience-dates">Jun — Dec 2022</p>
+          </div>
+          <p className="experience-role">Software Development Intern</p>
+          <p className="experience-summary">
+            Fixed software bugs, built internal automation modules, deployed updates,
+            and worked with CRM and ERP systems in Odoo.
+          </p>
+        </article>
       </section>
       <section className="experience" aria-labelledby="projects-title">
         <h2 id="projects-title">Projects</h2>
         <article className="project">
-          <h3><a href="https://github.com/Muha126/AI_Baby/tree/main" target="_blank" rel="noreferrer">Developmental AI Agent <span aria-hidden="true">↗</span></a></h3>
+          <h3><a href="https://github.com/Muha126/AI_Baby/tree/main" target="_blank" rel="noreferrer"><span className="project-mark ai-mark" aria-label="AI">AI</span> Developmental AI Agent <span aria-hidden="true">↗</span></a></h3>
           <p className="experience-role">Python · Machine Learning · Reinforcement Learning</p>
           <p className="experience-summary">An autonomous agent inspired by human learning, with curiosity-driven exploration and continual memory.</p>
         </article>
         <article className="project">
-          <h3><a href="https://github.com/Muha126/Cinema_Ticketing_System" target="_blank" rel="noreferrer">Cinema Ticketing Booking <span aria-hidden="true">↗</span></a></h3>
+          <h3><a href="https://github.com/Muha126/Cinema_Ticketing_System" target="_blank" rel="noreferrer"><span className="project-mark cinema-mark" aria-label="Cinema">▦</span> Cinema Ticketing Booking <span aria-hidden="true">↗</span></a></h3>
           <p className="experience-role">Django · React · SQLite · REST API</p>
           <p className="experience-summary">A team-built cinema booking app with authentication, seat reservations and a staff admin panel.</p>
         </article>
