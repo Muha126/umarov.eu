@@ -99,30 +99,32 @@ function ConsoleName() {
       canvas.height = Math.round(height * dpr)
       context.setTransform(dpr, 0, 0, dpr, 0, 0)
       // Each large letter is itself built from a grid of tiny console characters.
-      const subdivisions = width < 600 ? 1 : 3
-      const columns = 47 * subdivisions
-      const rows = 7 * subdivisions
+      const subdivisionsX = 4
+      const subdivisionsY = 4
+      const columns = 47 * subdivisionsX
+      const rows = 7 * subdivisionsY
       const stepX = width / columns
-      const stepY = Math.min(height / rows, stepX * 2.05)
+      const stepY = Math.min(height / rows, (width / 47) * 1.75 / subdivisionsY)
       const top = (height - rows * stepY) / 2
       const letters = 'M UMAROV'
       cells = []
       for (let y = 0; y < rows; y++) {
         for (let x = 0; x < columns; x++) {
-          const blockX = Math.floor(x / subdivisions)
+          const blockX = Math.floor(x / subdivisionsX)
           const letterIndex = Math.floor(blockX / 6)
           const letterX = blockX % 6
           const letter = letters[letterIndex]
-          const active = glyphs[letter]?.[Math.floor(y / subdivisions)]?.[letterX] === '1'
+          const active = glyphs[letter]?.[Math.floor(y / subdivisionsY)]?.[letterX] === '1'
           cells.push({
-            x: x * stepX, y: top + y * stepY, active,
+            x: Math.round(x * stepX * dpr) / dpr,
+            y: Math.round((top + y * stepY) * dpr) / dpr, active,
             char: alphabet[Math.floor(Math.random() * alphabet.length)],
-            brightness: 0.45 + Math.random() * 0.55,
+            brightness: 0.68 + Math.random() * 0.32,
             settle: 450 + (x / columns) * 1250 + Math.random() * 700,
           })
         }
       }
-      context.font = `${Math.max(4, stepX * 1.2)}px "Share Tech Mono", monospace`
+      context.font = `${Math.min(stepX * 1.2, stepY)}px "Share Tech Mono", monospace`
       context.textBaseline = 'top'
       start = performance.now()
     }

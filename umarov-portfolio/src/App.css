@@ -8,7 +8,8 @@
 .crt-filter-defs { position: absolute; width: 0; height: 0; pointer-events: none; }
 .crt-screen { position: relative; height: 100svh; overflow: hidden; background: #000; }
 .crt-screen-ready { filter: url('#crt-curvature'); }
-.crt-viewport { height: 100%; overflow-y: auto; overflow-x: hidden; }
+.crt-viewport { height: 100%; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; }
+.crt-viewport::-webkit-scrollbar { display: none; }
 
 /* Distort the composed viewport, so curvature stays tied to the glass while scrolling. */
 .crt-glass {
@@ -73,20 +74,20 @@
 .social-links {
   position: absolute;
   top: 28px;
-  left: 1.6vw;
+  left: calc(1.6vw + 64px);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 7px;
   color: #8b9e91;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.2;
 }
 
 .social-links a {
   display: grid;
-  width: 82px;
-  grid-template-columns: 66px 16px;
+  width: 94px;
+  grid-template-columns: 76px 18px;
   align-items: center;
   transition: color 160ms ease;
 }
@@ -98,11 +99,10 @@
 
 .console-name {
   display: block;
-  width: 100%;
+  width: 51.2%;
   height: clamp(180px, 31vw, 470px);
-  transform: scale(0.64);
-  transform-origin: center center;
-  filter: drop-shadow(0 0 8px rgba(102, 255, 128, .3));
+  margin-inline: auto;
+  filter: drop-shadow(0 0 4px rgba(102, 255, 128, .22));
 }
 
 
@@ -268,7 +268,7 @@
 
 @media (max-width: 600px) {
   .terminal { padding-inline: 6vw; }
-  .social-links { top: 22px; left: 4vw; font-size: 11px; }
+  .social-links { top: 22px; left: calc(4vw + 64px); font-size: 13px; }
   .console-name { height: 180px; }
   .experience { width: 88%; margin-top: 40px; }
   .experience-heading { flex-wrap: wrap; gap: 2px 12px; }
