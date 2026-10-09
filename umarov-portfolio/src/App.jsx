@@ -15,7 +15,7 @@ const glyphs = {
 
 const commandResponses = {
   help: 'available: about · experience · projects · contact · clear · reboot · doom · idkfa',
-  about: 'M Umarov — software developer building useful systems.',
+  about: 'M Umarov — software developer. From AI agents to production code.',
   experience: 'IBM Ireland · Software Development Intern · 2026\nUzAuto Chevrolet · Software Development Intern · 2022',
   projects: 'AI Baby · Cinema Ticketing System',
   contact: 'umarovm123@gmail.com',
@@ -195,7 +195,7 @@ function DoomPlayer({ onClose }) {
 
 function RebootOverlay({ onDone }) {
   useEffect(() => {
-    const timer = window.setTimeout(onDone, 3600)
+    const timer = window.setTimeout(onDone, 1800)
     return () => window.clearTimeout(timer)
   }, [onDone])
 
@@ -216,21 +216,21 @@ function RebootOverlay({ onDone }) {
 
 function BootTerminal({ onComplete }) {
   useEffect(() => {
-    const timer = window.setTimeout(onComplete, 3800)
+    const timer = window.setTimeout(onComplete, 1800)
     return () => window.clearTimeout(timer)
   }, [onComplete])
 
   return (
-    <div className="boot-terminal" aria-hidden="true">
-      <div className="boot-log">
-        <p>UMAROV BIOS v1.0.26</p>
-        <p>POST memory check ........ 16384K OK</p>
-        <p>loading terminal renderer . OK</p>
-        <p>mounting profile filesystem  OK</p>
-        <p>resolving contact links .... OK</p>
-        <p>loading experience modules . OK</p>
-        <p>starting visual shell ....... READY</p>
-        <p className="boot-prompt">visitor@umarov:~$ boot portfolio<span>_</span></p>
+    <div className="reboot-overlay boot-terminal" role="status" aria-live="polite">
+      <div className="reboot-screen">
+        <p className="reboot-line reboot-brand">UMAROV BIOS v1.0.26</p>
+        <p className="reboot-line">POST memory check ........ 16384K OK</p>
+        <p className="reboot-line">loading terminal renderer . OK</p>
+        <p className="reboot-line">mounting profile filesystem  OK</p>
+        <p className="reboot-line">resolving contact links .... OK</p>
+        <p className="reboot-line">loading experience modules . OK</p>
+        <div className="reboot-progress" aria-hidden="true"><span /></div>
+        <p className="reboot-line reboot-final">SYSTEM BOOT · PLEASE WAIT<span className="reboot-cursor">_</span></p>
       </div>
     </div>
   )
@@ -456,7 +456,6 @@ function App() {
     const viewport = document.querySelector('.crt-viewport')
     if (viewport) viewport.scrollTop = 0
     window.scrollTo({ top: 0, behavior: 'auto' })
-    setBootReady(false)
     setBootCycle(current => current + 1)
   }
 

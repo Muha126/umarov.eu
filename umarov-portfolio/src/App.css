@@ -6,63 +6,60 @@
 }
 
 /* The page boots like a terminal session on first visit and after reboot. */
-.boot-terminal {
-  position: fixed;
-  z-index: 20;
-  inset: 0;
-  display: flex;
-  align-items: flex-start;
-  padding: 14px 4.2vw;
-  box-sizing: border-box;
-  pointer-events: none;
-  background: #000;
-  color: #8b9e91;
-  font-size: 12px;
-  letter-spacing: .04em;
-  line-height: 1.7;
-  text-shadow: 0 0 8px rgba(82, 211, 106, .24);
-  animation: boot-terminal-exit 3.8s steps(1, end) forwards;
-}
-.boot-log { width: min(680px, 92vw); }
-.boot-log p { margin: 0; opacity: 1; clip-path: inset(0 100% 0 0); animation: boot-log-type 420ms steps(36, end) forwards; }
-.boot-log p:nth-child(2) { animation-delay: 280ms; }
-.boot-log p:nth-child(3) { animation-delay: 560ms; }
-.boot-log p:nth-child(4) { animation-delay: 840ms; }
-.boot-log p:nth-child(5) { animation-delay: 1120ms; }
-.boot-log p:nth-child(6) { animation-delay: 1400ms; }
-.boot-log p:nth-child(7) { animation-delay: 1680ms; }
-.boot-log .boot-prompt { margin-top: 8px; color: #66ff80; animation-delay: 2020ms; }
-.boot-prompt span { animation: console-caret 650ms steps(1) 2.2s infinite; }
+.boot-terminal.reboot-overlay { padding: 0; }
 .boot-sequence > .social-links,
 .boot-sequence > .console-name,
 .boot-sequence > .experience,
-.boot-sequence > .live-console {
-  opacity: 1;
+.boot-sequence > .live-console { opacity: 1; }
+.boot-sequence > .social-links { animation: terminal-line-type 227.5ms steps(18, end) 80ms both; }
+.boot-sequence > .console-name { animation: terminal-line-type 292.5ms steps(32, end) 140ms both; }
+.boot-sequence > .experience h2,
+.boot-sequence > .experience .experience-heading,
+.boot-sequence > .experience .experience-role,
+.boot-sequence > .experience .experience-summary,
+.boot-sequence > .experience .project h3,
+.boot-sequence > .experience .skills-list,
+.boot-sequence > .live-console .console-topline,
+.boot-sequence > .live-console .console-output,
+.boot-sequence > .live-console .console-form {
   clip-path: inset(0 100% 0 0);
-  animation: terminal-boot-type 900ms steps(38, end) both;
+  animation: terminal-line-type 234ms steps(42, end) both;
 }
-.boot-sequence > .social-links { animation-delay: 1.1s; }
-.boot-sequence > .console-name { animation-delay: 1.35s; }
-.boot-sequence > .experience:nth-of-type(1) { animation-delay: 2.05s; }
-.boot-sequence > .experience:nth-of-type(2) { animation-delay: 3.05s; }
-.boot-sequence > .experience:nth-of-type(3) { animation-delay: 4.05s; }
-.boot-sequence > .experience:nth-of-type(4) { animation-delay: 5.05s; }
-.boot-sequence > .live-console { animation-delay: 6.05s; }
-@keyframes boot-log-type { to { clip-path: none; } }
-@keyframes boot-terminal-exit {
-  0%, 72% { opacity: 1; }
-  100% { opacity: 0; visibility: hidden; }
-}
-@keyframes terminal-boot-type {
-  0% { clip-path: inset(0 100% 0 0); }
-  100% { clip-path: inset(0 0 0 0); }
-}
+.boot-sequence > .experience:nth-of-type(1) { --boot-start: .575s; }
+.boot-sequence > .experience:nth-of-type(2) { --boot-start: 1.075s; }
+.boot-sequence > .experience:nth-of-type(3) { --boot-start: 1.675s; }
+.boot-sequence > .experience:nth-of-type(4) { --boot-start: 2.275s; }
+.boot-sequence > .experience h2 { animation-delay: var(--boot-start); }
+.boot-sequence > .experience .experience-heading,
+.boot-sequence > .experience .project h3 { animation-delay: calc(var(--boot-start) + .14s); }
+.boot-sequence > .experience .experience-role { animation-delay: calc(var(--boot-start) + .25s); }
+.boot-sequence > .experience .experience-summary,
+.boot-sequence > .experience .skills-list { animation-delay: calc(var(--boot-start) + .36s); }
+.boot-sequence > .live-console .console-topline { clip-path: inset(0 100% 0 0); animation: terminal-line-type 162.5ms steps(26, end) 2.8s both; }
+.boot-sequence > .live-console .console-output { clip-path: inset(0 100% 0 0); animation: terminal-line-type 227.5ms steps(42, end) 2.925s both; }
+.boot-sequence > .live-console .console-form { clip-path: inset(0 100% 0 0); animation: terminal-line-type 162.5ms steps(28, end) 3.075s both; }
+@keyframes terminal-line-type { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
 
 .crt-filter-defs { position: absolute; width: 0; height: 0; pointer-events: none; }
-.crt-screen { position: relative; height: 100svh; overflow: hidden; background: #000; }
+.crt-screen {
+  position: relative;
+  height: 100svh;
+  overflow: hidden;
+  background: #000;
+}
+.crt-screen::before {
+  display: none;
+}
+.crt-screen::after {
+  display: none;
+}
 .crt-screen-ready { filter: url('#crt-curvature'); }
 .crt-viewport { height: 100%; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; }
 .crt-viewport::-webkit-scrollbar { display: none; }
+.crt-screen-ready .crt-viewport {
+  will-change: transform;
+  animation: crt-shake 7.5s steps(1, end) 2;
+}
 
 /* Distort the composed viewport, so curvature stays tied to the glass while scrolling. */
 .crt-glass {
@@ -86,7 +83,7 @@
   position: absolute;
   inset: -180px;
   background: url('./assets/crt-noise.svg') repeat;
-  opacity: .13;
+  opacity: .09;
   mix-blend-mode: screen;
   animation: crt-grain .6s steps(1) infinite;
 }
@@ -119,14 +116,32 @@
   to { transform: translateY(660%); }
 }
 
+@keyframes crt-shake {
+  0%, 72%, 100% { transform: translate3d(0, 0, 0); }
+  73% { transform: translate3d(-.65px, .3px, 0); }
+  74% { transform: translate3d(.45px, -.45px, 0); }
+  75% { transform: translate3d(-.25px, .2px, 0); }
+  76% { transform: translate3d(0, 0, 0); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .crt-noise { animation: none; }
   .crt-sweep { display: none; }
+  .crt-screen-ready .crt-viewport { animation: none; }
   .boot-sequence > .social-links,
   .boot-sequence > .console-name,
   .boot-sequence > .experience,
   .boot-sequence > .live-console { opacity: 1; clip-path: none; animation: none; }
-  .boot-terminal { opacity: 0; visibility: hidden; animation: none; }
+  .boot-sequence > .experience h2,
+  .boot-sequence > .experience .experience-heading,
+  .boot-sequence > .experience .experience-role,
+  .boot-sequence > .experience .experience-summary,
+  .boot-sequence > .experience .project h3,
+  .boot-sequence > .experience .skills-list,
+  .boot-sequence > .live-console .console-topline,
+  .boot-sequence > .live-console .console-output,
+  .boot-sequence > .live-console .console-form { clip-path: none; animation: none; }
+  .boot-terminal { animation: none; }
 }
 
 .social-links {
@@ -138,14 +153,14 @@
   align-items: flex-start;
   gap: 7px;
   color: #8b9e91;
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1.2;
 }
 
 .social-links a {
   display: grid;
-  width: 94px;
-  grid-template-columns: 76px 18px;
+  width: 117.5px;
+  grid-template-columns: 95px 22.5px;
   align-items: center;
   transition: color 160ms ease;
 }
@@ -153,7 +168,7 @@
 .social-links a span { margin-left: 0; color: #66ff80; }
 .social-links .cv-link { margin-top: 5px; color: #8b9e91; background: transparent; }
 .gmail-row { display: flex; align-items: center; gap: 8px; }
-.copy-note { margin-top: 3px; color: #66ff80; font-size: 10px; letter-spacing: .04em; }
+.copy-note { margin-top: 3px; color: #66ff80; font-size: 11.25px; letter-spacing: .04em; }
 
 .console-name {
   display: block;
@@ -165,18 +180,18 @@
 
 
 .experience {
-  width: 74%;
-  max-width: 900px;
+  width: 82%;
+  max-width: 1080px;
   margin: 32px auto 0;
   padding-bottom: 48px;
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1.7;
 }
 
 .experience h2 {
   margin: 0 0 26px;
   color: #3da653;
-  font-size: 22px;
+  font-size: 24.75px;
   font-weight: 400;
   text-shadow: 0 0 10px rgba(82, 211, 106, .36);
 }
@@ -191,14 +206,14 @@
 .experience h3 {
   margin: 0;
   color: #c4dbca;
-  font-size: 18px;
+  font-size: 20.25px;
   font-weight: 400;
 }
 
 .experience h3 span {
   margin-left: 6px;
   color: #728378;
-  font-size: 14px;
+  font-size: 15.75px;
 }
 
 .experience h3 .ibm-mark {
@@ -251,9 +266,9 @@
 }
 .experience h3 .tud-name { margin-left: 8px; }
 
-.experience-dates { margin: 0; color: #8b9e91; font-size: 13px; }
+.experience-dates { margin: 0; color: #8b9e91; font-size: 14.625px; }
 .experience-role { margin: 7px 0 0; color: #a4b9aa; }
-.experience-summary { max-width: 620px; margin: 10px 0 0; color: #8b9e91; }
+.experience-summary { max-width: 760px; margin: 10px 0 0; color: #8b9e91; }
 .experience-entry { margin-top: 34px; }
 .experience:last-child { padding-bottom: 100px; }
 .project + .project { margin-top: 32px; }
@@ -300,12 +315,12 @@
 .skills-list { display: flex; flex-wrap: wrap; gap: 10px 24px; margin: 0; padding: 0; list-style: none; color: #a4b9aa; }
 
 .live-console {
-  width: 74%;
-  max-width: 900px;
+  width: 82%;
+  max-width: 1080px;
   margin: 0 auto 120px;
   padding: 24px 0 0;
   color: #8b9e91;
-  font-size: 13px;
+  font-size: 14.625px;
 }
 .reboot-overlay {
   position: fixed;
@@ -319,21 +334,21 @@
 }
 .reboot-screen {
   width: min(620px, 82vw);
-  font-size: 14px;
+  font-size: 15.75px;
   line-height: 1.7;
 }
 .reboot-screen p { margin: 0; }
 .reboot-line { opacity: 0; animation: reboot-line-in 300ms steps(1) forwards; }
-.reboot-line:nth-child(2) { animation-delay: 320ms; }
-.reboot-line:nth-child(3) { animation-delay: 700ms; }
-.reboot-line:nth-child(4) { animation-delay: 1080ms; }
+.reboot-line:nth-child(2) { animation-delay: 180ms; }
+.reboot-line:nth-child(3) { animation-delay: 360ms; }
+.reboot-line:nth-child(4) { animation-delay: 540ms; }
 .reboot-brand { margin-bottom: 12px !important; color: #66ff80; letter-spacing: .08em; }
 .reboot-progress {
   height: 3px;
   margin: 18px 0 14px;
   background: rgba(139, 158, 145, .18);
   opacity: 0;
-  animation: reboot-line-in 300ms 1.35s steps(1) forwards;
+  animation: reboot-line-in 250ms .72s steps(1) forwards;
 }
 .reboot-progress span {
   display: block;
@@ -341,10 +356,10 @@
   height: 100%;
   background: #52d36a;
   box-shadow: 0 0 10px rgba(102, 255, 128, .55);
-  animation: reboot-progress 1.7s 1.45s steps(10, end) forwards;
+  animation: reboot-progress .75s .78s steps(10, end) forwards;
 }
-.reboot-final { color: #c4dbca; animation-delay: 1.55s; }
-.reboot-cursor { color: #66ff80; animation: console-caret 700ms steps(1) 1.8s infinite; }
+.reboot-final { color: #c4dbca; animation-delay: .9s; }
+.reboot-cursor { color: #66ff80; animation: console-caret 700ms steps(1) 1.1s infinite; }
 @keyframes reboot-line-in { to { opacity: 1; } }
 @keyframes reboot-progress { to { width: 100%; } }
 .console-topline { display: flex; align-items: baseline; }
@@ -359,7 +374,7 @@
   box-sizing: border-box;
   color: #7eb389;
   background: #020503;
-  font-size: 14px;
+  font-size: 15.75px;
   line-height: 1.45;
   text-shadow: 0 0 7px rgba(82, 211, 106, .24);
 }
@@ -369,13 +384,13 @@
 .doom-boot p:nth-child(4) { animation-delay: 1000ms; }
 .doom-boot-cursor { color: #66ff80; animation: doom-boot-line 420ms steps(1) forwards, console-caret 760ms steps(1) 1.1s infinite !important; }
 @keyframes doom-boot-line { to { opacity: 1; } }
-.doom-meta { margin: 8px 0 0; color: #52d36a; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+.doom-meta { margin: 8px 0 0; color: #52d36a; font-size: 12.375px; letter-spacing: .08em; text-transform: uppercase; }
 .doom-toolbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; color: #52d36a; }
 .doom-toolbar > div { display: flex; gap: 16px; }
 .doom-toolbar button { border: 0; padding: 8px 0; background: transparent; color: #a4b9aa; cursor: pointer; }
 .doom-toolbar button:hover { color: #66ff80; }
 .doom-status, .doom-controls, .doom-credit { color: #8b9e91; line-height: 1.5; }
-.doom-credit { font-size: 11px; }
+.doom-credit { font-size: 12.375px; }
 .doom-frame { display: block; width: 100%; aspect-ratio: 4 / 3; border: 0; background: #000; }
 .doom-touch-controls { display: none; }
 .doom-joystick,
@@ -423,7 +438,7 @@
   background: rgba(0, 0, 0, .42);
   color: #a4b9aa;
   font: inherit;
-  font-size: 11px;
+  font-size: 12.375px;
   letter-spacing: .06em;
 }
 .doom-touch-buttons button:active { background: rgba(82, 211, 106, .2); color: #66ff80; }
@@ -431,8 +446,8 @@
 .doom-controls button:hover { color: #66ff80; }
 .doom-panel:fullscreen { padding: 16px; display: flex; flex-direction: column; }
 .doom-panel:fullscreen .doom-frame { flex: 1; min-height: 0; aspect-ratio: auto; }
-.console-topline h2 { margin: 0; color: #3da653; font-size: 22px; font-weight: 400; text-shadow: 0 0 9px rgba(82, 211, 106, .28); }
-.console-topline > span { color: #506156; font-size: 11px; }
+.console-topline h2 { margin: 0; color: #3da653; font-size: 24.75px; font-weight: 400; text-shadow: 0 0 9px rgba(82, 211, 106, .28); }
+.console-topline > span { color: #506156; font-size: 12.375px; }
 .console-output { min-height: 74px; margin: 20px 0 14px; }
 .console-output p { margin: 5px 0; }
 .console-accent { color: #52d36a; }
@@ -449,11 +464,11 @@
 
 @media (max-width: 600px) {
   .terminal { padding-inline: 6vw; }
-  .social-links { top: 24px; left: 24px; font-size: 13px; }
+  .social-links { top: 24px; left: 24px; font-size: 14.625px; }
   .console-name { height: 180px; }
-  .experience { width: 88%; margin-top: 40px; }
+  .experience { width: 94%; margin-top: 40px; }
   .experience-heading { flex-wrap: wrap; gap: 2px 12px; }
-  .live-console { width: 88%; margin-bottom: 80px; }
+  .live-console { width: 94%; margin-bottom: 80px; }
 }
 
 @media (pointer: coarse), (max-width: 720px) {
@@ -464,6 +479,6 @@
     gap: 18px;
     padding: 13px 6px 4px;
   }
-  .doom-controls { font-size: 11px; }
+  .doom-controls { font-size: 12.375px; }
 }
 
