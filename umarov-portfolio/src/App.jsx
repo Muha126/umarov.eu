@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import cvFile from './assets/MukhammadkarimUmarov_.pdf'
 import './App.css'
 
@@ -192,10 +193,54 @@ function DoomPlayer({ onClose }) {
   )
 }
 
-function TerminalConsole() {
+function RebootOverlay({ onDone }) {
+  useEffect(() => {
+    const timer = window.setTimeout(onDone, 3600)
+    return () => window.clearTimeout(timer)
+  }, [onDone])
+
+  return createPortal(
+    <div className="reboot-overlay" role="status" aria-live="polite">
+      <div className="reboot-screen">
+        <p className="reboot-line reboot-brand">UMAROV BIOS v1.0.26</p>
+        <p className="reboot-line">POST memory check ........ 16384K OK</p>
+        <p className="reboot-line">terminal interface ....... READY</p>
+        <p className="reboot-line">unmounting local session . DONE</p>
+        <div className="reboot-progress" aria-hidden="true"><span /></div>
+        <p className="reboot-line reboot-final">SYSTEM REBOOT · PLEASE WAIT<span className="reboot-cursor">_</span></p>
+      </div>
+    </div>,
+    document.body,
+  )
+}
+
+function BootTerminal({ onComplete }) {
+  useEffect(() => {
+    const timer = window.setTimeout(onComplete, 3800)
+    return () => window.clearTimeout(timer)
+  }, [onComplete])
+
+  return (
+    <div className="boot-terminal" aria-hidden="true">
+      <div className="boot-log">
+        <p>UMAROV BIOS v1.0.26</p>
+        <p>POST memory check ........ 16384K OK</p>
+        <p>loading terminal renderer . OK</p>
+        <p>mounting profile filesystem  OK</p>
+        <p>resolving contact links .... OK</p>
+        <p>loading experience modules . OK</p>
+        <p>starting visual shell ....... READY</p>
+        <p className="boot-prompt">visitor@umarov:~$ boot portfolio<span>_</span></p>
+      </div>
+    </div>
+  )
+}
+
+function TerminalConsole({ onRebootComplete }) {
   const [command, setCommand] = useState('')
   const [history, setHistory] = useState([])
   const [playingDoom, setPlayingDoom] = useState(false)
+  const [rebooting, setRebooting] = useState(false)
   const inputRef = useRef(null)
 
   useEffect(() => {
@@ -217,9 +262,8 @@ function TerminalConsole() {
       setHistory([])
     } else if (value === 'reboot') {
       playTerminalTone(260, 0.1)
-      setHistory(current => [...current, { command: value, response: 'System rebooting...' }])
       setCommand('')
-      window.setTimeout(() => window.location.reload(), 700)
+      setRebooting(true)
       return
     } else {
       playTerminalTone(commandResponses[value] ? 460 : 190, commandResponses[value] ? 0.03 : 0.07)
@@ -236,7 +280,7 @@ function TerminalConsole() {
       <div className="console-topline">
         <h2 id="console-title">Console</h2>
       </div>
-      {playingDoom ? <DoomPlayer onClose={() => { setPlayingDoom(false); requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true })) }} /> : <>
+      {rebooting ? <RebootOverlay onDone={onRebootComplete} /> : playingDoom ? <DoomPlayer onClose={() => { setPlayingDoom(false); requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true })) }} /> : <>
       <div className="console-output" aria-live="polite">
         <p><span className="console-accent">+</span> connection established</p>
         <p><span className="console-accent">+</span> type <span className="console-command">help</span> to begin</p>
@@ -405,6 +449,16 @@ function CrtScreen({ children }) {
 
 function App() {
   const [copied, setCopied] = useState(false)
+  const [bootCycle, setBootCycle] = useState(0)
+  const [bootReady, setBootReady] = useState(false)
+
+  function finishReboot() {
+    const viewport = document.querySelector('.crt-viewport')
+    if (viewport) viewport.scrollTop = 0
+    window.scrollTo({ top: 0, behavior: 'auto' })
+    setBootReady(false)
+    setBootCycle(current => current + 1)
+  }
 
   async function copyEmail(event) {
     event.preventDefault()
@@ -415,7 +469,8 @@ function App() {
 
   return (
     <CrtScreen>
-    <main className="terminal" aria-labelledby="name">
+    {!bootReady && <BootTerminal key={bootCycle} onComplete={() => setBootReady(true)} />}
+    {bootReady && <main key={bootCycle} className="terminal boot-sequence" aria-labelledby="name">
       <nav className="social-links" aria-label="Contact links">
         <a href="https://github.com/Muha126" target="_blank" rel="noreferrer">GitHub <span>↗</span></a>
         <a href="https://www.linkedin.com/in/mukhammadkarim-umarov-495916262/" target="_blank" rel="noreferrer">LinkedIn <span>↗</span></a>
@@ -481,8 +536,9 @@ function App() {
           {['Python', 'C#', 'PHP', 'SQL', 'HTML5', 'CSS3', 'Git', 'Linux / Bash', 'OOP', 'Machine Learning'].map(skill => <li key={skill}>{skill}</li>)}
         </ul>
       </section>
-      <TerminalConsole />
+      <TerminalConsole onRebootComplete={finishReboot} />
     </main>
+    }
     </CrtScreen>
   )
 }
