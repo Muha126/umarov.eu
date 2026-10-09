@@ -47,7 +47,7 @@ chromeObserver.observe(document.documentElement, { childList: true, subtree: tru
 const chromeInterval = setInterval(hidePlayerChrome, 250)
 
 const script = document.createElement('script')
-script.src = 'https://v8.js-dos.com/latest/js-dos.js'
+script.src = './vendor/js-dos.js'
 script.onerror = fail
 script.onload = async () => {
   try {
@@ -59,6 +59,10 @@ script.onload = async () => {
     const config = new Uint8Array(await configResponse.arrayBuffer())
     if (failed) return
     const player = Dos(document.getElementById('dos'), {
+      pathPrefix: new URL('./vendor/emulators/', location.href).href,
+      backend: 'dosbox',
+      backendLocked: true,
+      startIpxServer: false,
       initFs: [archive, { path: 'UMAROV.CFG', contents: config }],
       dosboxConf: `[sdl]
 autolock=true

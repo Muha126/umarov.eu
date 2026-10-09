@@ -38,6 +38,12 @@
 .boot-sequence > .live-console .console-topline { clip-path: inset(0 100% 0 0); animation: terminal-line-type 162.5ms steps(26, end) 2.8s both; }
 .boot-sequence > .live-console .console-output { clip-path: inset(0 100% 0 0); animation: terminal-line-type 227.5ms steps(42, end) 2.925s both; }
 .boot-sequence > .live-console .console-form { clip-path: inset(0 100% 0 0); animation: terminal-line-type 162.5ms steps(28, end) 3.075s both; }
+.boot-sequence > .live-console.console-restored .console-topline,
+.boot-sequence > .live-console.console-restored .console-output,
+.boot-sequence > .live-console.console-restored .console-form {
+  clip-path: none;
+  animation: none;
+}
 @keyframes terminal-line-type { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
 
 .crt-filter-defs { position: absolute; width: 0; height: 0; pointer-events: none; }

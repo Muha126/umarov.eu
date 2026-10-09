@@ -240,6 +240,7 @@ function TerminalConsole({ onRebootComplete }) {
   const [command, setCommand] = useState('')
   const [history, setHistory] = useState([])
   const [playingDoom, setPlayingDoom] = useState(false)
+  const [consoleRestored, setConsoleRestored] = useState(false)
   const [rebooting, setRebooting] = useState(false)
   const inputRef = useRef(null)
 
@@ -276,11 +277,11 @@ function TerminalConsole({ onRebootComplete }) {
   }
 
   return (
-    <section className="live-console" aria-labelledby="console-title">
+    <section className={`live-console${consoleRestored ? ' console-restored' : ''}`} aria-labelledby="console-title">
       <div className="console-topline">
         <h2 id="console-title">Console</h2>
       </div>
-      {rebooting ? <RebootOverlay onDone={onRebootComplete} /> : playingDoom ? <DoomPlayer onClose={() => { setPlayingDoom(false); requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true })) }} /> : <>
+      {rebooting ? <RebootOverlay onDone={onRebootComplete} /> : playingDoom ? <DoomPlayer onClose={() => { setConsoleRestored(true); setPlayingDoom(false); requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true })) }} /> : <>
       <div className="console-output" aria-live="polite">
         <p><span className="console-accent">+</span> connection established</p>
         <p><span className="console-accent">+</span> type <span className="console-command">help</span> to begin</p>
