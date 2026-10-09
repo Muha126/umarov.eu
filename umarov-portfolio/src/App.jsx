@@ -162,6 +162,51 @@ function ConsoleName() {
   return <canvas ref={canvasRef} className="console-name" aria-hidden="true" />
 }
 
+function CrtScreen({ children }) {
+  const [map] = useState(() => {
+    // Red and green encode horizontal and vertical sampling offsets.
+    // Cross-axis curvature bends straight rows toward the screen corners.
+    const canvas = document.createElement('canvas')
+    const size = 256
+    canvas.width = canvas.height = size
+    const context = canvas.getContext('2d')
+    const pixels = context.createImageData(size, size)
+    for (let y = 0; y < size; y++) {
+      for (let x = 0; x < size; x++) {
+        const nx = (x / (size - 1)) * 2 - 1
+        const ny = (y / (size - 1)) * 2 - 1
+        const offset = (y * size + x) * 4
+        pixels.data[offset] = Math.round(255 * (.5 + .5 * nx * ny * ny))
+        pixels.data[offset + 1] = Math.round(255 * (.5 + .5 * ny * nx * nx))
+        pixels.data[offset + 2] = 128
+        pixels.data[offset + 3] = 255
+      }
+    }
+    context.putImageData(pixels, 0, 0)
+    return canvas.toDataURL()
+  })
+
+  return (
+    <>
+      <svg className="crt-filter-defs" aria-hidden="true">
+        <defs>
+          <filter id="crt-curvature" x="0" y="0" width="100%" height="100%" colorInterpolationFilters="sRGB">
+            <feImage href={map || undefined} width="100%" height="100%" preserveAspectRatio="none" result="curve" />
+            <feDisplacementMap in="SourceGraphic" in2="curve" scale="44" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+        </defs>
+      </svg>
+      <div className={`crt-screen${map ? ' crt-screen-ready' : ''}`}>
+        <div className="crt-viewport">{children}</div>
+        <div className="crt-glass" aria-hidden="true">
+          <div className="crt-noise" />
+          <div className="crt-sweep" />
+        </div>
+      </div>
+    </>
+  )
+}
+
 function App() {
   const [copied, setCopied] = useState(false)
 
@@ -173,6 +218,7 @@ function App() {
   }
 
   return (
+    <CrtScreen>
     <main className="terminal" aria-labelledby="name">
       <nav className="social-links" aria-label="Contact links">
         <a href="https://github.com/Muha126" target="_blank" rel="noreferrer">GitHub <span>↗</span></a>
@@ -241,6 +287,7 @@ function App() {
       </section>
       <TerminalConsole />
     </main>
+    </CrtScreen>
   )
 }
 

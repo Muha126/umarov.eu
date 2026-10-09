@@ -5,6 +5,71 @@
   background: #000;
 }
 
+.crt-filter-defs { position: absolute; width: 0; height: 0; pointer-events: none; }
+.crt-screen { position: relative; height: 100svh; overflow: hidden; background: #000; }
+.crt-screen-ready { filter: url('#crt-curvature'); }
+.crt-viewport { height: 100%; overflow-y: auto; overflow-x: hidden; }
+
+/* Distort the composed viewport, so curvature stays tied to the glass while scrolling. */
+.crt-glass {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  overflow: hidden;
+  pointer-events: none;
+  border-radius: 0;
+  background:
+    radial-gradient(ellipse at 50% 45%, transparent 38%, rgba(0, 0, 0, .32) 78%, rgba(0, 0, 0, .8) 100%),
+    radial-gradient(ellipse at 50% 8%, rgba(125, 205, 140, .065), transparent 65%),
+    repeating-linear-gradient(to bottom, transparent 0 3px, rgba(0, 0, 0, .09) 3px 4px);
+  box-shadow:
+    inset 0 0 5px 2px rgba(112, 172, 122, .2),
+    inset 0 0 44px 12px rgba(0, 0, 0, .75),
+    inset 0 0 150px rgba(39, 98, 49, .12);
+}
+
+.crt-noise {
+  position: absolute;
+  inset: -180px;
+  background: url('./assets/crt-noise.svg') repeat;
+  opacity: .13;
+  mix-blend-mode: screen;
+  animation: crt-grain .6s steps(1) infinite;
+}
+
+.crt-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 45%, rgba(54, 105, 24, .055), transparent 82%);
+}
+
+.crt-sweep {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent, rgba(102, 255, 128, .008) 48%, rgba(102, 255, 128, .014) 50%, transparent);
+  height: 18%;
+  transform: translateY(-110%);
+  animation: crt-scan 18s linear infinite;
+}
+
+@keyframes crt-grain {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-37px, 19px); }
+  40% { transform: translate(23px, -41px); }
+  60% { transform: translate(-51px, -17px); }
+  80% { transform: translate(43px, 31px); }
+}
+
+@keyframes crt-scan {
+  to { transform: translateY(660%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crt-noise { animation: none; }
+  .crt-sweep { display: none; }
+}
+
 .social-links {
   position: absolute;
   top: 28px;
