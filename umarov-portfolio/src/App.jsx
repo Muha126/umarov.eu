@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import cvFile from './assets/MukhammadkarimUmarov_.pdf'
 import './App.css'
 
 const alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ<>/\\{}[]#%+=:;*'
@@ -9,6 +10,70 @@ const glyphs = {
   R: ['11110', '10001', '10001', '11110', '10100', '10010', '10001'],
   O: ['01110', '10001', '10001', '10001', '10001', '10001', '01110'],
   V: ['10001', '10001', '10001', '10001', '10001', '01010', '00100'],
+}
+
+const commandResponses = {
+  help: 'available: about · experience · projects · contact · clear',
+  about: 'M Umarov — software developer building useful systems.',
+  experience: 'IBM Ireland · Software Development Intern · 2026\nUzAuto Chevrolet · Software Development Intern · 2022',
+  projects: 'AI Baby · Cinema Ticketing System',
+  contact: 'umarovm123@gmail.com',
+}
+
+function TerminalConsole() {
+  const [command, setCommand] = useState('')
+  const [history, setHistory] = useState([])
+  const inputRef = useRef(null)
+
+  useEffect(() => {
+    inputRef.current?.focus({ preventScroll: true })
+  }, [])
+
+  function runCommand(event) {
+    event.preventDefault()
+    const value = command.trim().toLowerCase()
+    if (!value) return
+    if (value === 'clear') {
+      setHistory([])
+    } else {
+      setHistory(current => [...current, {
+        command: value,
+        response: commandResponses[value] || `command not found: ${value}`,
+      }])
+    }
+    setCommand('')
+  }
+
+  return (
+    <section className="live-console" aria-labelledby="console-title">
+      <div className="console-topline">
+        <h2 id="console-title">Console</h2>
+      </div>
+      <div className="console-output" aria-live="polite">
+        <p><span className="console-accent">+</span> connection established</p>
+        <p><span className="console-accent">+</span> type <span className="console-command">help</span> to begin</p>
+        {history.map((item, index) => (
+          <div className="console-entry" key={`${item.command}-${index}`}>
+            <p><span className="console-prompt">visitor@umarov:~$</span> {item.command}</p>
+            <p className="console-response">{item.response}</p>
+          </div>
+        ))}
+      </div>
+      <form className="console-form" onSubmit={runCommand}>
+        <label className="console-prompt" htmlFor="console-input">visitor@umarov:~$</label>
+        <span className="console-input-wrap">
+          <input
+            id="console-input"
+            ref={inputRef}
+            value={command}
+            onChange={event => setCommand(event.target.value)}
+            autoComplete="off"
+            spellCheck="false"
+          />
+        </span>
+      </form>
+    </section>
+  )
 }
 
 function ConsoleName() {
@@ -57,7 +122,7 @@ function ConsoleName() {
           })
         }
       }
-      context.font = `${Math.max(4, stepX * 1.2)}px "Courier New", monospace`
+      context.font = `${Math.max(4, stepX * 1.2)}px "Share Tech Mono", monospace`
       context.textBaseline = 'top'
       start = performance.now()
     }
@@ -100,7 +165,8 @@ function ConsoleName() {
 function App() {
   const [copied, setCopied] = useState(false)
 
-  async function copyEmail() {
+  async function copyEmail(event) {
+    event.preventDefault()
     await navigator.clipboard.writeText('umarovm123@gmail.com')
     setCopied(true)
     window.setTimeout(() => setCopied(false), 2200)
@@ -112,10 +178,10 @@ function App() {
         <a href="https://github.com/Muha126" target="_blank" rel="noreferrer">GitHub <span>↗</span></a>
         <a href="https://www.linkedin.com/in/mukhammadkarim-umarov-495916262/" target="_blank" rel="noreferrer">LinkedIn <span>↗</span></a>
         <span className="gmail-row">
-          <a href="mailto:umarovm123@gmail.com">Gmail <span>↗</span></a>
-          <button type="button" className="copy-button" onClick={copyEmail} aria-label="Copy Gmail address" title="Copy email">⧉</button>
+          <a href="mailto:umarovm123@gmail.com" onClick={copyEmail}>Gmail <span>↗</span></a>
         </span>
-        {copied && <span className="copy-note" role="status">Gmail copied</span>}
+        <a className="cv-link" href={cvFile} target="_blank" rel="noreferrer">CV.pdf <span>↗</span></a>
+        {copied && <span className="copy-note" role="status">umarovm123@gmail.com copied</span>}
       </nav>
       <h1 id="name" className="sr-only">M UMAROV</h1>
       <ConsoleName />
@@ -167,12 +233,13 @@ function App() {
       </section>
 
 
-            <section className="experience" aria-labelledby="skills-title">
+      <section className="experience" aria-labelledby="skills-title">
         <h2 id="skills-title">Skills</h2>
         <ul className="skills-list" aria-label="Technical skills">
           {['Python', 'C#', 'PHP', 'SQL', 'HTML5', 'CSS3', 'Git', 'Linux / Bash', 'OOP', 'Machine Learning'].map(skill => <li key={skill}>{skill}</li>)}
         </ul>
       </section>
+      <TerminalConsole />
     </main>
   )
 }
