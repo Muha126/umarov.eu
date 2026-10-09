@@ -471,7 +471,7 @@
 @media (max-width: 600px) {
   .terminal { padding-inline: 6vw; }
   .social-links { top: 24px; left: 24px; font-size: 14.625px; }
-  .console-name { height: 180px; }
+  .console-name { width: 72%; height: 180px; margin-top: 32px; }
   .experience { width: 94%; margin-top: 40px; }
   .experience-heading { flex-wrap: wrap; gap: 2px 12px; }
   .live-console { width: 94%; margin-bottom: 80px; }
