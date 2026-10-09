@@ -279,6 +279,56 @@
 .doom-status, .doom-controls, .doom-credit { color: #8b9e91; line-height: 1.5; }
 .doom-credit { font-size: 11px; }
 .doom-frame { display: block; width: 100%; aspect-ratio: 4 / 3; border: 0; background: #000; }
+.doom-touch-controls { display: none; }
+.doom-joystick,
+.doom-touch-buttons button {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.doom-joystick {
+  position: relative;
+  width: 78px;
+  height: 78px;
+  border: 1px solid rgba(82, 211, 106, .5);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(82, 211, 106, .14), rgba(0, 0, 0, .28) 68%);
+  box-shadow: inset 0 0 18px rgba(82, 211, 106, .12), 0 0 10px rgba(82, 211, 106, .12);
+}
+.doom-joystick::before,
+.doom-joystick::after {
+  content: '';
+  position: absolute;
+  background: rgba(139, 158, 145, .28);
+}
+.doom-joystick::before { top: 50%; left: 13px; right: 13px; height: 1px; }
+.doom-joystick::after { top: 13px; bottom: 13px; left: 50%; width: 1px; }
+.doom-joystick-knob {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 31px;
+  height: 31px;
+  border: 1px solid #66ff80;
+  border-radius: 50%;
+  background: rgba(102, 255, 128, .19);
+  box-shadow: 0 0 9px rgba(102, 255, 128, .28);
+  transform: translate(-50%, -50%);
+}
+.doom-touch-buttons { display: flex; gap: 10px; }
+.doom-touch-buttons button {
+  min-width: 58px;
+  min-height: 42px;
+  border: 1px solid rgba(82, 211, 106, .52);
+  border-radius: 3px;
+  padding: 6px 8px;
+  background: rgba(0, 0, 0, .42);
+  color: #a4b9aa;
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: .06em;
+}
+.doom-touch-buttons button:active { background: rgba(82, 211, 106, .2); color: #66ff80; }
 .doom-controls button { margin-left: 10px; border: 0; background: transparent; color: #52d36a; cursor: pointer; font: inherit; }
 .doom-controls button:hover { color: #66ff80; }
 .doom-panel:fullscreen { padding: 16px; display: flex; flex-direction: column; }
@@ -301,10 +351,21 @@
 
 @media (max-width: 600px) {
   .terminal { padding-inline: 6vw; }
-  .social-links { top: 82px; left: calc(4vw + 79px); font-size: 15px; }
+  .social-links { top: 24px; left: 24px; font-size: 13px; }
   .console-name { height: 180px; }
   .experience { width: 88%; margin-top: 40px; }
   .experience-heading { flex-wrap: wrap; gap: 2px 12px; }
   .live-console { width: 88%; margin-bottom: 80px; }
+}
+
+@media (pointer: coarse), (max-width: 720px) {
+  .doom-touch-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 13px 6px 4px;
+  }
+  .doom-controls { font-size: 11px; }
 }
 

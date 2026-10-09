@@ -41,8 +41,132 @@ function playTerminalTone(frequency = 420, duration = 0.035) {
   }
 }
 
+const doomKeyMap = {
+  w: { key: 'w', code: 'KeyW', keyCode: 87 },
+  s: { key: 's', code: 'KeyS', keyCode: 83 },
+  ArrowLeft: { key: 'ArrowLeft', code: 'ArrowLeft', keyCode: 37 },
+  ArrowRight: { key: 'ArrowRight', code: 'ArrowRight', keyCode: 39 },
+  Control: { key: 'Control', code: 'ControlLeft', keyCode: 17 },
+  Space: { key: ' ', code: 'Space', keyCode: 32 },
+}
+
+function DoomMobileControls({ frameRef }) {
+  const joystickRef = useRef(null)
+  const knobRef = useRef(null)
+  const pointerRef = useRef(null)
+  const pressedRef = useRef(new Set())
+
+  function sendKey(keyName, pressed) {
+    const key = doomKeyMap[keyName]
+    if (!key) return
+    if (pressed && pressedRef.current.has(keyName)) return
+    if (!pressed && !pressedRef.current.has(keyName)) return
+    try {
+      const frame = frameRef.current
+      const target = frame?.contentWindow
+      if (!target) return
+      target.focus()
+      const event = new target.KeyboardEvent(pressed ? 'keydown' : 'keyup', {
+        key: key.key,
+        code: key.code,
+        keyCode: key.keyCode,
+        which: key.keyCode,
+        bubbles: true,
+        cancelable: true,
+      })
+      Object.defineProperty(event, 'keyCode', { value: key.keyCode })
+      Object.defineProperty(event, 'which', { value: key.keyCode })
+      target.document.dispatchEvent(event)
+      if (pressed) pressedRef.current.add(keyName)
+      else pressedRef.current.delete(keyName)
+    } catch {
+      // Touch controls are optional if the browser blocks iframe access.
+    }
+  }
+
+  function releaseAll() {
+    for (const key of pressedRef.current) sendKey(key, false)
+    pointerRef.current = null
+    if (knobRef.current) knobRef.current.style.transform = 'translate(-50%, -50%)'
+  }
+
+  function updateJoystick(event) {
+    const joystick = joystickRef.current
+    if (!joystick) return
+    const rect = joystick.getBoundingClientRect()
+    const max = rect.width * .32
+    let x = event.clientX - (rect.left + rect.width / 2)
+    let y = event.clientY - (rect.top + rect.height / 2)
+    const length = Math.hypot(x, y)
+    if (length > max) {
+      x = x / length * max
+      y = y / length * max
+    }
+    if (knobRef.current) knobRef.current.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`
+    const threshold = max * .32
+    sendKey('ArrowLeft', x < -threshold)
+    sendKey('ArrowRight', x > threshold)
+    sendKey('w', y < -threshold)
+    sendKey('s', y > threshold)
+  }
+
+  function startJoystick(event) {
+    event.preventDefault()
+    pointerRef.current = event.pointerId
+    event.currentTarget.setPointerCapture(event.pointerId)
+    updateJoystick(event)
+  }
+
+  function moveJoystick(event) {
+    if (pointerRef.current === event.pointerId) {
+      event.preventDefault()
+      updateJoystick(event)
+    }
+  }
+
+  function stopJoystick(event) {
+    if (pointerRef.current === event.pointerId) releaseAll()
+  }
+
+  function startButton(event, key) {
+    event.preventDefault()
+    event.currentTarget.setPointerCapture(event.pointerId)
+    sendKey(key, true)
+  }
+
+  function stopButton(key) {
+    sendKey(key, false)
+  }
+
+  useEffect(() => () => {
+    pressedRef.current.clear()
+    pointerRef.current = null
+  }, [])
+
+  return (
+    <div className="doom-touch-controls" aria-label="Touch controls">
+      <div
+        className="doom-joystick"
+        ref={joystickRef}
+        onPointerDown={startJoystick}
+        onPointerMove={moveJoystick}
+        onPointerUp={stopJoystick}
+        onPointerCancel={stopJoystick}
+        onLostPointerCapture={releaseAll}
+      >
+        <span className="doom-joystick-knob" ref={knobRef} />
+      </div>
+      <div className="doom-touch-buttons">
+        <button type="button" onPointerDown={event => startButton(event, 'Control')} onPointerUp={() => stopButton('Control')} onPointerCancel={() => stopButton('Control')}>FIRE</button>
+        <button type="button" onPointerDown={event => startButton(event, 'Space')} onPointerUp={() => stopButton('Space')} onPointerCancel={() => stopButton('Space')}>OPEN</button>
+      </div>
+    </div>
+  )
+}
+
 function DoomPlayer({ onClose }) {
   const panelRef = useRef(null)
+  const frameRef = useRef(null)
   const [booted, setBooted] = useState(false)
 
   useEffect(() => {
@@ -59,7 +183,8 @@ function DoomPlayer({ onClose }) {
         <p>IWAD found · E1M1 ready</p>
         <p className="doom-boot-cursor">_</p>
       </div> : <>
-        <iframe className="doom-frame" title="DOOM shareware — Knee-Deep in the Dead" src={`${import.meta.env.BASE_URL}doom/index.html`} allow="autoplay; fullscreen; gamepad" allowFullScreen />
+        <iframe ref={frameRef} className="doom-frame" title="DOOM shareware — Knee-Deep in the Dead" src={`${import.meta.env.BASE_URL}doom/index.html`} allow="autoplay; fullscreen; gamepad" allowFullScreen />
+        <DoomMobileControls frameRef={frameRef} />
         <p className="doom-meta">DOOM / E1M1 · INPUT READY · MOUSE ACTIVE</p>
         <p className="doom-controls">WASD: move · ← →: turn · Ctrl: fire · Space: open · Esc: menu <button type="button" onClick={onClose}>Exit ×</button></p>
       </>}
